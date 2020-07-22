@@ -24,6 +24,29 @@ import java.util.stream.IntStream;
 
 public class BaseTests {
     private WebDriver driver ;
+    public static ArrayList<String> GetSegmentsId(Integer AudioId, Integer Speaker1, Integer Speaker2, String Cookie) throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url("https://api-workbench.apptek.com/api/Programs/"+AudioId+"/Segments/")
+                .method("GET", null)
+                .addHeader("Cookie",Cookie)
+                .build() ;   Response response = client.newCall(request).execute() ;
+
+        Pattern pattern = Pattern.compile("\"id\": (.*?),", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(response.body().string());
+        ArrayList<String> arrOfStr= new ArrayList<String>();
+
+        while (matcher.find()) {
+            if (!matcher.group(1).equals(Speaker1.toString()) && !matcher.group(1).equals(Speaker2.toString()) && !matcher.group(1).equals("null")){
+                arrOfStr.add(matcher.group(1));
+            }
+
+        }
+        System.out.println("/////:"+ arrOfStr.size());
+        return arrOfStr;
+    }
+
     public  void setUp (ArrayList<String> num){
         System.setProperty("webdriver.opera.driver","resources/operadriver.exe") ;
         driver =new OperaDriver();
@@ -35,14 +58,7 @@ public class BaseTests {
         mdp.sendKeys("123Shems");
         WebElement button =driver.findElement(By.cssSelector("#mat-tab-content-0-0 button")) ;
         button.click();
-        /*try {
-            TimeUnit.SECONDS.sleep((long) 5.0);
-            button.click();button.click();button.click();
 
-            System.out.println("1111111");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
         try{
             TimeUnit.SECONDS.sleep((long) 5.0);
             WebElement NAME =driver.findElement(By.id("mat-input-9")) ;
@@ -193,35 +209,13 @@ public class BaseTests {
 
 
 
-       OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        Request request = new Request.Builder()
-                .url("https://api-workbench.apptek.com/api/Programs/749861/Segments/")
-                .method("GET", null)
-                .addHeader("Cookie", "WbApiCookie=CfDJ8DZCzl-4oAVHhr3RSmcGD519-5zfIJVP1w59DqgczqOMVNUWymUql5RJj2RYMn95q1lVFlS_SU137233Mm2gvS8CM1KNZmrj5nNfcFzoEdq1Ibxw6rfzhMfZBhZ-EVj1DSDJZG398pQtND9dfrVRCxbgfla84ZEgACIUC2L_3gRCFTB0npxPjnt8FJFhzONECtuRgD6xU9CIto_TIgd5t-_5cl5s4QnHONRfVKAQ0bcq3u3wOYjSJt9bQ5aOf9ilTNh_j3GREdbatkQMDrvK9XeU7igWQyKPgPnOJoE2hQr8LleswQaYETlAmKqV_IElefk3h7xAiBheaR_VahRif2Rs69mNb8VTRWKpJzELpEvJx84LX2dPLLMwINoRjk7iAlsQUl-9K4zfWJHlJff4wq0JlZDfCZuYlqc1IIKX93w6FeD-E4j16j-LiEifIdK2jw8FVMW2p_rJxej5yeBh8MuDnqCOmCZbRprsjiWTI6jvhjUIUOR7GTfevAkYNaI8Anx0W_ddzWyKUOqKg6UbVTjpSl2Y-AW64Zlimj-ohnk5Fdo3Kn88HO8GwCUFQwfeeuflnoTiFGvjKihFWoHS87AhpiRXes_fhbnQVlOZHwPYfO5Aozj4lY-fIYcNoyK6M8BaBclK0XWD3qR54WM_AePGu1gis43V9omefun6817Ma-hXFmZH0Vyb7Eq9110Hu74O1SDA27rlqDrSWmRrtgFIilqU2BDwf22aClJbB7TiF8ujK_ah1VjyTedAsCKxJVUoj5jGNDnML4UiLIw9CfUsAQgkkLsSiWp69DcZ2q3-XrsAhT_xDmg7O-Y9yHGCqedoa0oE2qn_vjPJbk-nNj6hrGSo6f-MhMP94fCzSPQs")
-                .build() ;   Response response = client.newCall(request).execute() ;
-
-        Pattern pattern = Pattern.compile("\"id\": (.*?),", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(response.body().string());
-        ArrayList<String> arrOfStr= new ArrayList<String>();
-
-        while (matcher.find()) {
-            if (!matcher.group(1).equals("2716575") && !matcher.group(1).equals("2716577") && !matcher.group(1).equals("null")){
-                arrOfStr.add(matcher.group(1));
-            }
-
-        }
-        System.out.println("/////:"+ arrOfStr.size());
-
-
-
        BaseTests test = new BaseTests();
-        test.setUp(arrOfStr);
+
+        test.setUp(GetSegmentsId(749861,2716575,2716577,"WbApiCookie=CfDJ8DZCzl-4oAVHhr3RSmcGD519-5zfIJVP1w59DqgczqOMVNUWymUql5RJj2RYMn95q1lVFlS_SU137233Mm2gvS8CM1KNZmrj5nNfcFzoEdq1Ibxw6rfzhMfZBhZ-EVj1DSDJZG398pQtND9dfrVRCxbgfla84ZEgACIUC2L_3gRCFTB0npxPjnt8FJFhzONECtuRgD6xU9CIto_TIgd5t-_5cl5s4QnHONRfVKAQ0bcq3u3wOYjSJt9bQ5aOf9ilTNh_j3GREdbatkQMDrvK9XeU7igWQyKPgPnOJoE2hQr8LleswQaYETlAmKqV_IElefk3h7xAiBheaR_VahRif2Rs69mNb8VTRWKpJzELpEvJx84LX2dPLLMwINoRjk7iAlsQUl-9K4zfWJHlJff4wq0JlZDfCZuYlqc1IIKX93w6FeD-E4j16j-LiEifIdK2jw8FVMW2p_rJxej5yeBh8MuDnqCOmCZbRprsjiWTI6jvhjUIUOR7GTfevAkYNaI8Anx0W_ddzWyKUOqKg6UbVTjpSl2Y-AW64Zlimj-ohnk5Fdo3Kn88HO8GwCUFQwfeeuflnoTiFGvjKihFWoHS87AhpiRXes_fhbnQVlOZHwPYfO5Aozj4lY-fIYcNoyK6M8BaBclK0XWD3qR54WM_AePGu1gis43V9omefun6817Ma-hXFmZH0Vyb7Eq9110Hu74O1SDA27rlqDrSWmRrtgFIilqU2BDwf22aClJbB7TiF8ujK_ah1VjyTedAsCKxJVUoj5jGNDnML4UiLIw9CfUsAQgkkLsSiWp69DcZ2q3-XrsAhT_xDmg7O-Y9yHGCqedoa0oE2qn_vjPJbk-nNj6hrGSo6f-MhMP94fCzSPQs"));
 
 
 
     }
-
 
 }
 
